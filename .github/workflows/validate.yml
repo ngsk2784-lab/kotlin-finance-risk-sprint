@@ -20,6 +20,7 @@ jobs:
           from pathlib import Path
           import json
           import re
+          import xml.etree.ElementTree as ET
 
           root = Path('.')
 
@@ -49,8 +50,10 @@ jobs:
 
           for html in sorted(root.glob('*.html')):
               parsed = Links()
-              parsed.feed(html.read_text(encoding='utf-8'))
+              html_text = html.read_text(encoding='utf-8')
+              parsed.feed(html_text)
               assert ''.join(parsed.title).strip(), f'{html}: missing title'
+              assert 'rel="canonical"' in html_text, f'{html}: missing canonical URL'
               for target in parsed.targets:
                   if target.startswith(('http:', 'https:', 'mailto:', '#')):
                       continue
@@ -65,6 +68,17 @@ jobs:
           config = json.loads((root / 'vercel.json').read_text(encoding='utf-8'))
           csp = next(item['value'] for item in config['headers'][0]['headers'] if item['key'] == 'Content-Security-Policy')
           assert "script-src 'self'" in csp and "'unsafe-inline'" not in csp
+
+          sitemap = ET.parse(root / 'sitemap.xml')
+          namespace = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          sitemap_urls = {node.text for node in sitemap.findall('.//sm:loc', namespace)}
+          assert sitemap_urls == {
+              'https://kotlin-finance-risk-sprint.vercel.app/',
+              'https://kotlin-finance-risk-sprint.vercel.app/sample-vulnerable',
+              'https://kotlin-finance-risk-sprint.vercel.app/sample-clean',
+          }
+          robots = (root / 'robots.txt').read_text(encoding='utf-8')
+          assert 'Sitemap: https://kotlin-finance-risk-sprint.vercel.app/sitemap.xml' in robots
 
           public_files = [
               *root.glob('*.html'), *root.glob('*.css'), *root.glob('*.js'),
