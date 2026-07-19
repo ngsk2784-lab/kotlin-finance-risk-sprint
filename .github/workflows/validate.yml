@@ -80,9 +80,14 @@ jobs:
           robots = (root / 'robots.txt').read_text(encoding='utf-8')
           assert 'Sitemap: https://kotlin-finance-risk-sprint.vercel.app/sitemap.xml' in robots
 
+          indexnow_keys = [path for path in root.glob('*.txt') if re.fullmatch(r'[0-9a-f]{32}\.txt', path.name)]
+          assert len(indexnow_keys) == 1
+          assert indexnow_keys[0].read_text(encoding='utf-8').strip() == indexnow_keys[0].stem
+
           public_files = [
               *root.glob('*.html'), *root.glob('*.css'), *root.glob('*.js'),
-              *root.glob('*.svg'), *root.glob('*.md'), *root.glob('data/*.json'),
+              *root.glob('*.svg'), *root.glob('*.md'), *root.glob('*.txt'),
+              *root.glob('*.xml'), *root.glob('data/*.json'),
           ]
           forbidden = re.compile(r'Finguard|C:\\Users|Axhackerton|onclick=|-----BEGIN [A-Z ]*PRIVATE KEY-----', re.I)
           for public_file in public_files:
