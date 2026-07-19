@@ -1,0 +1,78 @@
+name: validate-site
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  static-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate public files
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import json
+          import re
+
+          root = Path('.')
+
+          class Links(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.targets = []
+                  self.title = []
+                  self.in_title = False
+
+              def handle_starttag(self, tag, attrs):
+                  values = dict(attrs)
+                  if tag == 'a' and values.get('href'):
+                      self.targets.append(values['href'])
+                  if tag == 'script' and values.get('src'):
+                      self.targets.append(values['src'])
+                  if tag == 'title':
+                      self.in_title = True
+
+              def handle_endtag(self, tag):
+                  if tag == 'title':
+                      self.in_title = False
+
+              def handle_data(self, data):
+                  if self.in_title:
+                      self.title.append(data.strip())
+
+          for html in sorted(root.glob('*.html')):
+              parsed = Links()
+              parsed.feed(html.read_text(encoding='utf-8'))
+              assert ''.join(parsed.title).strip(), f'{html}: missing title'
+              for target in parsed.targets:
+                  if target.startswith(('http:', 'https:', 'mailto:', '#')):
+                      continue
+                  local = html.parent / target.split('#', 1)[0].split('?', 1)[0]
+                  assert local.exists(), f'{html}: missing local target {target}'
+
+          vulnerable = json.loads((root / 'data/vulnerable-findings.json').read_text(encoding='utf-8'))
+          clean = json.loads((root / 'data/clean-findings.json').read_text(encoding='utf-8'))
+          assert vulnerable['summary'] == {'critical': 3, 'warning': 4, 'info': 0, 'total': 7}
+          assert clean['summary'] == {'critical': 0, 'warning': 0, 'info': 0, 'total': 0}
+
+          config = json.loads((root / 'vercel.json').read_text(encoding='utf-8'))
+          csp = next(item['value'] for item in config['headers'][0]['headers'] if item['key'] == 'Content-Security-Policy')
+          assert "script-src 'self'" in csp and "'unsafe-inline'" not in csp
+
+          public_files = [
+              *root.glob('*.html'), *root.glob('*.css'), *root.glob('*.js'),
+              *root.glob('*.svg'), *root.glob('*.md'), *root.glob('data/*.json'),
+          ]
+          forbidden = re.compile(r'Finguard|C:\\Users|Axhackerton|onclick=|-----BEGIN [A-Z ]*PRIVATE KEY-----', re.I)
+          for public_file in public_files:
+              assert not forbidden.search(public_file.read_text(encoding='utf-8')), f'{public_file}: forbidden public content'
+
+          print('STATIC_VALIDATION_OK')
+          PY
