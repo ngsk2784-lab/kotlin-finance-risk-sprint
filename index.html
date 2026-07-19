@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kotlin 금융 백엔드 릴리스 리스크 스프린트 — 48시간 사전 점검</title>
+  <meta name="description" content="Kotlin/Spring 금융 백엔드의 복원력·컴플라이언스 리스크를 7가지 정적 휴리스틱과 맥락 검토로 좁혀 드립니다. SOW·결제·권한·범위·빌드 전제 확인 후 48시간, 런칭 슬롯 110만원.">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#081312">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="48h Release Risk Sprint">
+  <meta property="og:title" content="Kotlin 금융 백엔드 릴리스 리스크 스프린트">
+  <meta property="og:description" content="Kotlin/Spring 금융 백엔드 한 서비스를 SOW·결제·권한·범위·빌드 전제 확인 후 48시간 안에 점검합니다.">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="48h Release Risk Sprint">
+  <meta name="twitter:description" content="Kotlin/Spring 금융 백엔드 복원력·컴플라이언스 리스크 사전 점검">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <header class="site-header">
+    <div class="shell nav-wrap">
+      <a class="brand" href="#top" aria-label="릴리스 리스크 스프린트 홈">
+        <span class="brand-mark" aria-hidden="true">//</span>
+        <span>48h <strong>Release Risk Sprint</strong></span>
+      </a>
+      <nav class="site-nav" aria-label="주요 메뉴">
+        <a href="#checks">점검 항목</a>
+        <a href="#proof">검증 샘플</a>
+        <a href="#scope">범위·가격</a>
+        <a class="nav-cta" href="mailto:ngsk2784@gmail.com?subject=%5BRelease%20Risk%20Sprint%5D%20%EC%9C%A0%EB%A3%8C%20%EC%A0%90%EA%B2%80%20%EC%83%81%EB%8B%B4&amp;body=%EC%95%88%EB%85%95%ED%95%98%EC%84%B8%EC%9A%94.%20Kotlin%20%EA%B8%88%EC%9C%B5%20%EB%B0%B1%EC%97%94%EB%93%9C%20%EB%A6%B4%EB%A6%AC%EC%8A%A4%20%EB%A6%AC%EC%8A%A4%ED%81%AC%20%EC%8A%A4%ED%94%84%EB%A6%B0%ED%8A%B8%EB%A5%BC%20%EB%AC%B8%EC%9D%98%ED%95%A9%EB%8B%88%EB%8B%A4.%0A%0A%EC%84%9C%EB%B9%84%EC%8A%A4%2F%EC%A0%80%EC%9E%A5%EC%86%8C%3A%0A%EB%8C%80%EB%9E%B5%EC%A0%81%EC%9D%B8%20Kotlin%20LoC%3A%0A%EB%B3%B4%EC%95%88%20%EC%A0%91%EA%B7%BC%20%EC%A0%88%EC%B0%A8(%EC%BD%94%EB%93%9C%C2%B7%EC%9E%90%EA%B2%A9%EC%A6%9D%EB%AA%85%20%EC%B2%A8%EB%B6%80%20%EA%B8%88%EC%A7%80)%3A%0A%EB%B9%8C%EB%93%9C%C2%B7%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EB%B0%A9%EB%B2%95%3A%0A%ED%9D%AC%EB%A7%9D%20%EC%9D%BC%EC%A0%95%3A%0A%EA%B8%B0%ED%83%80%20%EC%B0%B8%EA%B3%A0%EC%82%AC%ED%95%AD%3A">범위 상담</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-grid shell">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>Kotlin / Spring · 7-check preflight</p>
+          <h1>운영 장애와 감사 리스크,<br><em>배포 전에 좁힙니다.</em></h1>
+          <p class="hero-lead">금융 백엔드 한 서비스를 정적 휴리스틱으로 훑고, 발견 맥락을 다시 검토해 개발팀이 바로 판단할 수 있는 근거로 정리합니다.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="mailto:ngsk2784@gmail.com?subject=%5BRelease%20Risk%20Sprint%5D%20%EC%9C%A0%EB%A3%8C%20%EC%A0%90%EA%B2%80%20%EC%83%81%EB%8B%B4&amp;body=%EC%95%88%EB%85%95%ED%95%98%EC%84%B8%EC%9A%94.%20Kotlin%20%EA%B8%88%EC%9C%B5%20%EB%B0%B1%EC%97%94%EB%93%9C%20%EB%A6%B4%EB%A6%AC%EC%8A%A4%20%EB%A6%AC%EC%8A%A4%ED%81%AC%20%EC%8A%A4%ED%94%84%EB%A6%B0%ED%8A%B8%EB%A5%BC%20%EB%AC%B8%EC%9D%98%ED%95%A9%EB%8B%88%EB%8B%A4.%0A%0A%EC%84%9C%EB%B9%84%EC%8A%A4%2F%EC%A0%80%EC%9E%A5%EC%86%8C%3A%0A%EB%8C%80%EB%9E%B5%EC%A0%81%EC%9D%B8%20Kotlin%20LoC%3A%0A%EB%B3%B4%EC%95%88%20%EC%A0%91%EA%B7%BC%20%EC%A0%88%EC%B0%A8(%EC%BD%94%EB%93%9C%C2%B7%EC%9E%90%EA%B2%A9%EC%A6%9D%EB%AA%85%20%EC%B2%A8%EB%B6%80%20%EA%B8%88%EC%A7%80)%3A%0A%EB%B9%8C%EB%93%9C%C2%B7%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EB%B0%A9%EB%B2%95%3A%0A%ED%9D%AC%EB%A7%9D%20%EC%9D%BC%EC%A0%95%3A%0A%EA%B8%B0%ED%83%80%20%EC%B0%B8%EA%B3%A0%EC%82%AC%ED%95%AD%3A">유료 점검 문의 <span aria-hidden="true">↗</span></a>
+            <a class="button button-secondary" href="mailto:ngsk2784@gmail.com?subject=%5BRelease%20Risk%20Sprint%5D%20%EA%B3%B5%EA%B0%9C%20%EC%A0%80%EC%9E%A5%EC%86%8C%20%EB%AC%B4%EB%A3%8C%20%EC%83%98%ED%94%8C%20%EC%8A%A4%EC%BA%94&amp;body=%EA%B3%B5%EA%B0%9C%20%EC%A0%80%EC%9E%A5%EC%86%8C%20URL%3A%0A%EA%B3%A0%EC%A0%95%20%EC%BB%A4%EB%B0%8B%20SHA%3A%0AKotlin%2FSpring%20%EC%84%9C%EB%B9%84%EC%8A%A4%20%EA%B2%BD%EB%A1%9C%3A%0A%ED%8C%8C%EC%9D%BC%20%EC%88%98%2FLoC%3A%0A%EA%B2%80%EC%82%AC%20%EC%8A%B9%EC%9D%B8%20%EA%B6%8C%ED%95%9C(%EC%98%88%2F%EC%95%84%EB%8B%88%EC%98%A4)%3A%0A%ED%99%95%EC%9D%B8%ED%95%98%EA%B3%A0%20%EC%8B%B6%EC%9D%80%20%EB%B6%80%EB%B6%84%3A">공개 저장소 무료 스캔</a>
+          </div>
+          <p class="hero-note">SOW·결제·권한·범위·슬롯 규칙·빌드 전제 확인 후 48시간 · 1개 서비스 · Kotlin 30,000 LoC 이하</p>
+        </div>
+
+        <div class="scan-window" aria-label="샘플 점검 결과 요약">
+          <div class="window-bar">
+            <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span>preflight / demo-run</span>
+            <span class="window-state">complete</span>
+          </div>
+          <div class="window-body">
+            <div class="scan-command"><span>$</span> release-risk scan ./service</div>
+            <div class="scan-progress" aria-hidden="true"><span></span></div>
+            <div class="scan-meta">
+              <span>RULESET <b>v1.0.0</b></span>
+              <span>FILES <b>5</b></span>
+              <span>CHECKS <b>7/7</b></span>
+            </div>
+            <div class="scan-result">
+              <span class="result-count">07</span>
+              <div><strong>review candidates</strong><small>3 critical · 4 warning</small></div>
+            </div>
+            <ul class="scan-list" aria-label="대표 발견 항목">
+              <li><span class="severity critical">CRIT</span><code>OrderApiClient.kt:6</code><b>timeout</b></li>
+              <li><span class="severity critical">CRIT</span><code>AccountService.kt:13</code><b>plaintext</b></li>
+              <li><span class="severity warning">WARN</span><code>WithdrawalService.kt:15</code><b>audit log</b></li>
+            </ul>
+            <p class="demo-label">검증용 Kotlin 샘플 실행 결과 · 실제 고객 사례 아님</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="signal-strip" aria-label="서비스 핵심 조건">
+      <div class="shell signal-grid">
+        <div><span>01</span><strong>48시간</strong><small>착수 전제 확인 후</small></div>
+        <div><span>02</span><strong>7개 체크</strong><small>복원력 4 · 리스크 3</small></div>
+        <div><span>03</span><strong>개선 슬롯</strong><small>패치 또는 개선 플레이북</small></div>
+        <div><span>04</span><strong>조건부 재스캔·리뷰</strong><small>적격 시 1회 재검증 · 30분 설명</small></div>
+      </div>
+    </section>
+
+    <section class="section" id="checks">
+      <div class="shell">
+        <div class="section-heading split-heading">
+          <div>
+            <p class="eyebrow">Fixed scope / 명확한 점검 범위</p>
+            <h2>고정된 7개 신호만 좁게 봅니다.</h2>
+          </div>
+          <p>범위를 부풀리지 않습니다. 운영 복원력 4개, 민감정보·거래 증적 리스크 3개를 정적 패턴과 주변 코드 맥락으로 확인합니다.</p>
+        </div>
+
+        <div class="check-columns">
+          <article class="check-group">
+            <div class="group-head">
+              <span class="group-index">A</span>
+              <div><p>RESILIENCE</p><h3>장애 전파를 줄이는 설정</h3></div>
+            </div>
+            <ol class="check-list">
+              <li><span>01</span><div><strong>타임아웃</strong><small>외부 호출의 connect / read / response 제한</small></div><i>RES-001</i></li>
+              <li><span>02</span><div><strong>재시도·백오프</strong><small>일시 오류 재시도와 간격 정책</small></div><i>RES-002</i></li>
+              <li><span>03</span><div><strong>서킷브레이커</strong><small>연쇄 장애를 막는 회로 차단</small></div><i>RES-003</i></li>
+              <li><span>04</span><div><strong>커넥션 풀 상한</strong><small>DB·HTTP 리소스 최대치 설정</small></div><i>RES-004</i></li>
+            </ol>
+          </article>
+
+          <article class="check-group compliance">
+            <div class="group-head">
+              <span class="group-index">B</span>
+              <div><p>COMPLIANCE RISK</p><h3>노출과 증적 공백을 찾는 패턴</h3></div>
+            </div>
+            <ol class="check-list" start="5">
+              <li><span>05</span><div><strong>하드코딩 시크릿</strong><small>키·비밀번호·토큰의 소스 내 평문 상수</small></div><i>CMP-001</i></li>
+              <li><span>06</span><div><strong>민감 필드 평문</strong><small>계좌·카드·주민번호 저장·전송 후보</small></div><i>CMP-002</i></li>
+              <li><span>07</span><div><strong>거래 로그</strong><small>이체·출금·결제 처리 지점의 감사 증적</small></div><i>CMP-003</i></li>
+            </ol>
+          </article>
+        </div>
+        <p class="scope-caption"><span aria-hidden="true">※</span> 발견은 확정 판정이 아니라 검토 후보입니다. 프레임워크 설정·호출 경로 등 주변 맥락을 함께 확인해 오탐 가능성을 표시합니다.</p>
+      </div>
+    </section>
+
+    <section class="section section-proof" id="proof">
+      <div class="shell proof-grid">
+        <div class="proof-copy">
+          <p class="eyebrow">Verified demo / 공개 가능한 근거</p>
+          <h2>주장보다 먼저,<br>비교 가능한 결과.</h2>
+          <p>동일한 7개 룰셋으로 만든 Kotlin 검증 샘플 두 세트를 실행했습니다. 취약 샘플에서는 7건, 개선 샘플에서는 0건을 기록했습니다.</p>
+          <div class="proof-disclaimer">이 결과는 도구 동작을 확인한 데모이며 고객 성과, 탐지율 벤치마크 또는 안전 인증이 아닙니다.</div>
+        </div>
+
+        <div class="comparison-card">
+          <div class="comparison-head">
+            <span>DEMO COMPARISON</span>
+            <small>2026-07-19 · ruleset v1.0.0</small>
+          </div>
+          <div class="comparison-row comparison-labels" aria-hidden="true">
+            <span>샘플</span><span>파일</span><span>발견</span><span>결과</span>
+          </div>
+          <div class="comparison-row">
+            <strong>취약 샘플</strong><span>5 Kotlin</span><span class="finding-num bad">7</span><span>3 critical · 4 warning</span>
+          </div>
+          <div class="comparison-row">
+            <strong>개선 샘플</strong><span>5 Kotlin</span><span class="finding-num good">0</span><span>7개 체크 발견 없음</span>
+          </div>
+          <div class="sample-actions">
+            <a href="sample-vulnerable.html">취약 샘플 리포트 보기 <span aria-hidden="true">→</span></a>
+            <a href="sample-clean.html">개선 샘플 리포트 보기 <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="download-actions" aria-label="샘플 다운로드">
+            <a href="sample-vulnerable.html" download>취약 HTML 다운로드</a>
+            <a href="data/vulnerable-findings.json" download>JSON 다운로드</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="deliverables">
+      <div class="shell">
+        <div class="section-heading">
+          <p class="eyebrow">What you receive / 납품물</p>
+          <h2>발견에서 작은 개선까지,<br>한 묶음으로 전달합니다.</h2>
+        </div>
+        <div class="deliverable-grid">
+          <article>
+            <span class="file-icon">{ }</span>
+            <p>01 · MACHINE READABLE</p>
+            <h3>Findings JSON</h3>
+            <ul>
+              <li>룰 ID와 심각도</li>
+              <li>파일·라인 위치</li>
+              <li>후보 제목과 검토 상태</li>
+            </ul>
+          </article>
+          <article>
+            <span class="file-icon">MD</span>
+            <p>02 · FOR DEVELOPERS</p>
+            <h3>개발자 리포트</h3>
+            <ul>
+              <li>우선순위 요약</li>
+              <li>코드 맥락 검토 메모</li>
+              <li>수정 방향 제안</li>
+            </ul>
+          </article>
+          <article>
+            <span class="file-icon">#</span>
+            <p>03 · TRACEABLE</p>
+            <h3>실행 추적 문서</h3>
+            <ul>
+              <li>실행 시각과 범위</li>
+              <li>적용한 전체 룰 목록</li>
+              <li>발견·미발견 기록</li>
+            </ul>
+          </article>
+          <article class="review-card">
+            <span class="file-icon">30′</span>
+            <p>04 · WALKTHROUGH</p>
+            <h3>리뷰 세션</h3>
+            <ul>
+              <li>30분 온라인 리뷰</li>
+              <li>발견 근거 질의응답</li>
+              <li>우선순위 합의</li>
+            </ul>
+          </article>
+          <article class="patch-card">
+            <span class="file-icon">PR</span>
+            <p>05 · REMEDIATION SLOT</p>
+            <h3>개선 슬롯 1회</h3>
+            <ul>
+              <li>적격 시 PR/패치 + 재스캔</li>
+              <li>아니면 플레이북 + 테스트 계획</li>
+              <li>0건이면 예방적 검증 계획</li>
+            </ul>
+            <small class="card-caveat">사람이 확인한 유효 Critical, 서면 합의한 작은 수정 범위, 재현 가능한 비프로덕션 빌드·테스트가 모두 있으면 소규모 패치/PR + 해당 범위 재스캔 1회를 제공합니다. 하나라도 없으면 최우선 유효 발견의 코드 수준 개선 플레이북 + 인수 테스트 계획으로 대체하며, 유효 발견이 0건이면 예방적 검증 계획을 제공합니다.</small>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section process-section" id="process">
+      <div class="shell process-grid">
+        <div class="section-heading">
+          <p class="eyebrow">48-hour flow / 진행 방식</p>
+          <h2>범위를 정한 뒤<br>시계를 시작합니다.</h2>
+          <p>SOW 승인, 결제, 권한 있는 접근, 서면 범위, 슬롯 결정 규칙과 빌드·테스트 전제가 모두 확인된 시점부터 48시간을 계산합니다.</p>
+        </div>
+        <ol class="timeline">
+          <li><span>00H</span><div><strong>착수 전제 확정</strong><p>SOW·결제·권한·서면 범위·슬롯 규칙·빌드/테스트 준비 상태를 확인합니다.</p></div></li>
+          <li><span>04H</span><div><strong>정적 스캔</strong><p>고정된 7개 체크로 재현 가능한 결과를 생성합니다.</p></div></li>
+          <li><span>24H</span><div><strong>맥락 검토</strong><p>Critical 우선으로 중복 제거한 최대 30개 후보의 호출부와 설정을 읽고 오탐 가능성·영향도를 정리합니다.</p></div></li>
+          <li><span>48H</span><div><strong>납품·개선 슬롯</strong><p>경로 A 적격 시 패치·재스캔, 아니면 플레이북·인수 테스트 계획, 0건이면 예방적 검증 계획을 전달하고 30분 리뷰를 잡습니다.</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section offer-section" id="scope">
+      <div class="shell offer-grid">
+        <div class="offer-main">
+          <div>
+            <p class="eyebrow">Launch slot / 한정 범위 제안</p>
+            <h2>Kotlin 금융 백엔드<br>릴리스 리스크 스프린트</h2>
+            <p>큰 감사 프로젝트 전에, 지금 코드에서 먼저 확인할 7가지 신호를 확보하세요.</p>
+          </div>
+          <div class="price-block">
+            <small>런칭 슬롯</small>
+            <strong><span>₩</span>1,100,000</strong>
+            <p>1개 서비스 · Kotlin 30,000 LoC 이하</p>
+            <p>서비스 대가 · 세금·원천징수·증빙은 실제 요건에 따라 SOW에서 확정</p>
+          </div>
+          <ul class="offer-includes">
+            <li><span>✓</span>SOW·결제·권한·범위·슬롯 규칙·빌드 전제 확인 후 48시간</li>
+            <li><span>✓</span>전체 기계 후보 JSON + 최대 30건 사람 맥락 검토</li>
+            <li><span>✓</span>Findings JSON + 개발자 리포트</li>
+            <li><span>✓</span>실행 추적 문서 + 30분 리뷰</li>
+            <li><span>✓</span>개선 슬롯 1회: 적격 시 패치·재스캔, 아니면 플레이북·인수 테스트 계획, 0건이면 예방적 검증 계획</li>
+          </ul>
+          <a class="button button-primary button-wide" href="mailto:ngsk2784@gmail.com?subject=%5BRelease%20Risk%20Sprint%5D%20%EC%9C%A0%EB%A3%8C%20%EC%A0%90%EA%B2%80%20%EC%83%81%EB%8B%B4&amp;body=%EC%84%9C%EB%B9%84%EC%8A%A4%2F%EC%A0%80%EC%9E%A5%EC%86%8C%3A%0AKotlin%20LoC%3A%0A%EC%A0%91%EA%B7%BC%20%EB%B0%A9%EC%8B%9D%3A%0A%EB%B9%8C%EB%93%9C%C2%B7%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EB%B0%A9%EB%B2%95%3A%0A%ED%9D%AC%EB%A7%9D%20%EC%9D%BC%EC%A0%95%3A">이메일로 범위 확인하기 <span aria-hidden="true">↗</span></a>
+          <p class="email-note">입력 폼 없이 메일 앱이 열립니다 · <a href="mailto:ngsk2784@gmail.com">ngsk2784@gmail.com</a><br>첫 문의에는 비공개 코드·자격 증명·실데이터를 첨부하지 마세요.</p>
+        </div>
+
+        <aside class="free-card">
+          <span class="free-tag">₩0 · PUBLIC REPO ONLY</span>
+          <h3>먼저 무료로<br>샘플을 받아보세요.</h3>
+          <p>권한과 고정 커밋을 확인한 공개 GitHub 저장소의 작은 Kotlin/Spring 범위에 같은 7개 체크를 실행해 요약 샘플을 회신합니다.</p>
+          <ul>
+            <li>최대 20개 파일 또는 5,000 LoC</li>
+            <li>1쪽 요약 · 대표 후보 최대 3건</li>
+            <li>개선 슬롯 없음</li>
+            <li>비밀정보 전송 불필요</li>
+          </ul>
+          <a class="button button-secondary button-wide" href="mailto:ngsk2784@gmail.com?subject=%5BRelease%20Risk%20Sprint%5D%20%EA%B3%B5%EA%B0%9C%20%EC%A0%80%EC%9E%A5%EC%86%8C%20%EB%AC%B4%EB%A3%8C%20%EC%83%98%ED%94%8C%20%EC%8A%A4%EC%BA%94&amp;body=%EA%B3%B5%EA%B0%9C%20%EC%A0%80%EC%9E%A5%EC%86%8C%20URL%3A%0A%EA%B3%A0%EC%A0%95%20%EC%BB%A4%EB%B0%8B%20SHA%3A%0AKotlin%2FSpring%20%EC%84%9C%EB%B9%84%EC%8A%A4%20%EA%B2%BD%EB%A1%9C%3A%0A%ED%8C%8C%EC%9D%BC%20%EC%88%98%2FLoC%3A%0A%EA%B2%80%EC%82%AC%20%EC%8A%B9%EC%9D%B8%20%EA%B6%8C%ED%95%9C(%EC%98%88%2F%EC%95%84%EB%8B%88%EC%98%A4)%3A%0A%ED%99%95%EC%9D%B8%ED%95%98%EA%B3%A0%20%EC%8B%B6%EC%9D%80%20%EB%B6%80%EB%B6%84%3A">무료 샘플 스캔 요청</a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section boundaries-section" id="limits">
+      <div class="shell boundaries-grid">
+        <div>
+          <p class="eyebrow">Honest boundaries / 하는 일과 하지 않는 일</p>
+          <h2>프리플라이트의 경계를<br>미리 명확히 합니다.</h2>
+        </div>
+        <div class="boundary-cards">
+          <article class="does-card">
+            <h3><span>✓</span>포함하는 것</h3>
+            <p>결정론적 정적 휴리스틱으로 전체 기계 후보를 기록하고, Critical 우선으로 중복 제거한 최대 30개 후보를 사람이 코드 맥락에서 검토합니다. 30개 이하면 전부 검토하며, 초과분은 미검토 기계 후보로 구분합니다. 개선 슬롯은 사람이 확인한 유효 Critical, 서면 합의한 작은 수정 범위, 재현 가능한 비프로덕션 빌드·테스트가 모두 있을 때만 사람이 소규모로 수정하고 재스캔합니다.</p>
+          </article>
+          <article class="doesnt-card">
+            <h3><span>×</span>포함하지 않는 것</h3>
+            <ul>
+              <li>런타임·부하 테스트 또는 침투 테스트</li>
+              <li>CVE·의존성 취약점 스캔</li>
+              <li>전체 법률·규정 감사</li>
+              <li>컴플라이언스 준수 보장·인증</li>
+              <li>자동 수정 또는 광범위한 리팩터링</li>
+            </ul>
+            <p>특히 재시도·서킷브레이커 체크는 WebClient, RestTemplate, <code>@FeignClient</code> 중심의 제한된 파일 패턴만 다룹니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section faq-section" id="faq">
+      <div class="shell faq-grid">
+        <div class="section-heading">
+          <p class="eyebrow">FAQ / 자주 묻는 질문</p>
+          <h2>시작 전에<br>확인할 내용.</h2>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>48시간은 언제부터 계산하나요?<span aria-hidden="true">+</span></summary>
+            <p>SOW 승인, 결제, 합법적이고 작동하는 저장소 접근, 30,000 LoC 이하 서면 범위, 슬롯 결정 규칙과 빌드·테스트 준비 상태를 모두 확인한 시점부터 계산합니다. 세부 수정 범위 승인 지연, 접근 장애, 자료 누락이나 범위 변경 같은 고객 측 차단이 생기면 시계를 멈추고 새 납기를 서면 합의합니다.</p>
+          </details>
+          <details>
+            <summary>0건이면 안전하다는 뜻인가요?<span aria-hidden="true">+</span></summary>
+            <p>아닙니다. 0건은 고정된 7개 정적 체크에서 후보가 발견되지 않았다는 뜻일 뿐, 보안·안전·규정 준수를 인증하지 않습니다.</p>
+          </details>
+          <details>
+            <summary>Java나 다른 언어도 가능한가요?<span aria-hidden="true">+</span></summary>
+            <p>현재 런칭 범위는 Kotlin/Spring 백엔드입니다. 다른 언어나 프레임워크는 이 제안의 고정 범위에 포함하지 않습니다.</p>
+          </details>
+          <details>
+            <summary>코드도 직접 고쳐주나요?<span aria-hidden="true">+</span></summary>
+            <p>스캐너가 자동 수정하지는 않습니다. 사람이 확인한 유효 Critical, 서면 합의한 작은 수정 범위, 재현 가능한 비프로덕션 빌드·테스트가 모두 있으면 소규모 PR 또는 패치와 해당 범위 재스캔 1회를 제공합니다. 하나라도 없으면 최우선 유효 발견의 코드 수준 개선 플레이북과 인수 테스트 계획으로 대체합니다. 유효 발견이 0건이면 가짜 발견 대신 예방적 검증 계획을 제공하며, 확인되지 않은 수정 결과를 만들지 않습니다.</p>
+          </details>
+          <details>
+            <summary>무료 샘플에 비공개 저장소를 보내도 되나요?<span aria-hidden="true">+</span></summary>
+            <p>무료 샘플은 공개 저장소만 받습니다. 비공개 코드나 자격 증명을 이메일에 첨부하지 마세요.</p>
+          </details>
+          <details>
+            <summary>외부 AI·모델 서비스에 코드를 보내나요?<span aria-hidden="true">+</span></summary>
+            <p>사용 여부, 제공자, 처리 목적, 보존·학습·하위처리 조건을 SOW에 적고 고객의 사전 서면 승인을 받은 경우에만 합의 범위의 코드를 전송합니다. 승인과 처리 조건 확인이 없으면 외부 AI·모델 서비스에 코드를 입력하지 않습니다.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <div class="shell final-cta-inner">
+        <div>
+          <p class="eyebrow">Ready for preflight?</p>
+          <h2>7개 신호부터 확인해 보세요.</h2>
+          <p>서비스 경로와 대략적인 Kotlin LoC를 보내주시면 범위부터 확인합니다.</p>
+        </div>
+        <a class="button button-primary" href="mailto:ngsk2784@gmail.com?subject=%5BRelease%20Risk%20Sprint%5D%20%EC%9C%A0%EB%A3%8C%20%EC%A0%90%EA%B2%80%20%EC%83%81%EB%8B%B4&amp;body=%EC%84%9C%EB%B9%84%EC%8A%A4%2F%EC%A0%80%EC%9E%A5%EC%86%8C%3A%0AKotlin%20LoC%3A%0A%EC%A0%91%EA%B7%BC%20%EB%B0%A9%EC%8B%9D%3A%0A%EB%B9%8C%EB%93%9C%C2%B7%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EB%B0%A9%EB%B2%95%3A%0A%ED%9D%AC%EB%A7%9D%20%EC%9D%BC%EC%A0%95%3A">범위 상담 메일 보내기 <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-grid">
+      <div>
+        <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">//</span><span>48h <strong>Release Risk Sprint</strong></span></a>
+        <p>Kotlin/Spring 금융 백엔드를 위한<br>복원력·컴플라이언스 리스크 사전 점검.</p>
+      </div>
+      <div class="footer-links">
+        <p>EXPLORE</p>
+        <a href="#checks">7개 체크</a>
+        <a href="#proof">검증 샘플</a>
+        <a href="#limits">한계와 제외 범위</a>
+      </div>
+      <div class="footer-links">
+        <p>CONTACT</p>
+        <a href="mailto:ngsk2784@gmail.com">ngsk2784@gmail.com</a>
+        <span>이메일 문의 전용</span>
+        <span>폼·추적 스크립트 없음</span>
+      </div>
+    </div>
+    <div class="shell footer-bottom">
+      <span>© 2026 48h Release Risk Sprint</span>
+      <span>정적 사전 점검 · 보증 또는 인증 아님</span>
+    </div>
+  </footer>
+</body>
+</html>

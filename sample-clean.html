@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>개선 샘플 리포트 — 48h Release Risk Sprint</title>
+  <meta name="description" content="Kotlin 개선 검증 샘플 5개 파일에서 7개 정적 체크를 실행한 공개용 비교 리포트입니다.">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#07110f">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="report.css">
+  <script src="report.js" defer></script>
+</head>
+<body class="report-body">
+  <a class="skip-link" href="#report-main">리포트 본문으로 건너뛰기</a>
+  <header class="report-topbar">
+    <div class="report-shell report-topbar-inner">
+      <a class="report-back" href="index.html#proof"><span aria-hidden="true">←</span> 서비스 소개로 돌아가기</a>
+      <div class="report-top-actions"><a class="report-action" href="data/clean-findings.json" download>JSON 다운로드</a><button class="report-action" type="button" data-print>인쇄 / PDF</button></div>
+    </div>
+  </header>
+  <main class="report-main" id="report-main">
+    <div class="report-shell">
+      <section class="report-hero">
+        <div class="report-kicker"><span class="demo-pill">PUBLIC DEMO · NON-PRODUCTION</span><span class="result-pill clean">0 REVIEW CANDIDATES</span></div>
+        <h1>개선 검증 샘플<br><em>정적 점검 리포트</em></h1>
+        <p>동일한 7개 고정 룰셋을 Kotlin 비교 fixture에 실행한 공개용 결과입니다. 0건은 이 7개 체크에서 후보가 없다는 뜻이며 안전·보안·규정 준수 인증이 아닙니다.</p>
+        <div class="report-meta" aria-label="점검 메타데이터">
+          <div><span>SCAN ID</span><code>demo-20260719-clean</code></div><div><span>SCOPE</span><strong>demo://kotlin/clean</strong></div><div><span>FILES / LOC</span><strong>5 / 180</strong></div><div><span>RULESET</span><strong>v1.0.0 · 7 checks</strong></div>
+        </div>
+      </section>
+      <section class="report-section" aria-labelledby="summary-title">
+        <div class="report-section-heading"><div><p>01 / SUMMARY</p><h2 id="summary-title">점검 요약</h2></div><span>동일한 결정론적 룰셋 실행</span></div>
+        <div class="report-summary"><article class="critical-count"><span>CRITICAL</span><strong>00</strong><small>후보 없음</small></article><article class="warning-count"><span>WARNING</span><strong>00</strong><small>후보 없음</small></article><article class="clear-count"><span>TOTAL</span><strong>00</strong><small>7개 룰 모두 실행</small></article></div>
+      </section>
+      <section class="report-section" aria-labelledby="findings-title">
+        <div class="report-section-heading"><div><p>02 / FINDINGS</p><h2 id="findings-title">발견 목록</h2></div><span>고정 범위 안에서만 해석</span></div>
+        <div class="zero-panel"><div><span class="zero-mark">0</span><h3>발견된 검토 후보가 없습니다.</h3><p>이 결과는 타임아웃, 재시도·백오프, 서킷브레이커, 풀 상한, 하드코딩 시크릿, 민감 필드 평문, 거래 로그의 7개 정적 체크만 설명합니다.</p></div></div>
+      </section>
+      <section class="report-section" aria-labelledby="audit-title">
+        <div class="report-section-heading"><div><p>03 / AUDIT TRAIL</p><h2 id="audit-title">실행한 전체 룰</h2></div><span>발견 여부와 관계없이 기록</span></div>
+        <div class="audit-panel"><table class="audit-table"><thead><tr><th>RULE</th><th>CATEGORY</th><th>CHECK</th><th>RESULT</th></tr></thead><tbody>
+          <tr><td><code>RES-001</code></td><td>resilience</td><td>타임아웃</td><td class="audit-status">clear</td></tr><tr><td><code>RES-002</code></td><td>resilience</td><td>재시도·백오프</td><td class="audit-status">clear</td></tr><tr><td><code>RES-003</code></td><td>resilience</td><td>서킷브레이커</td><td class="audit-status">clear</td></tr><tr><td><code>RES-004</code></td><td>resilience</td><td>커넥션 풀 상한</td><td class="audit-status">clear</td></tr><tr><td><code>CMP-001</code></td><td>compliance risk</td><td>하드코딩 시크릿</td><td class="audit-status">clear</td></tr><tr><td><code>CMP-002</code></td><td>compliance risk</td><td>민감 필드 평문</td><td class="audit-status">clear</td></tr><tr><td><code>CMP-003</code></td><td>compliance risk</td><td>거래 감사 로그</td><td class="audit-status">clear</td></tr>
+        </tbody></table></div>
+      </section>
+      <aside class="report-note"><strong>0건 ≠ 안전 인증</strong><p>런타임·침투·부하 테스트, CVE 검사, 전체 법률 감사, 규정 준수 보장 또는 자동 수정은 포함하지 않습니다. 공개판에서는 로컬 절대 경로와 내부·외부 근거 링크를 제거했습니다.</p></aside>
+    </div>
+  </main>
+  <footer class="report-footer"><div class="report-shell report-footer-inner"><span>48h Release Risk Sprint · public demo</span><span>Generated from a deterministic 7-check fixture run</span></div></footer>
+</body>
+</html>

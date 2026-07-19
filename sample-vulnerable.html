@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>취약 샘플 리포트 — 48h Release Risk Sprint</title>
+  <meta name="description" content="Kotlin 취약 검증 샘플 5개 파일에서 확인한 7개 정적 리스크 후보의 공개용 리포트입니다.">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#07110f">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="report.css">
+  <script src="report.js" defer></script>
+</head>
+<body class="report-body">
+  <a class="skip-link" href="#report-main">리포트 본문으로 건너뛰기</a>
+  <header class="report-topbar">
+    <div class="report-shell report-topbar-inner">
+      <a class="report-back" href="index.html#proof"><span aria-hidden="true">←</span> 서비스 소개로 돌아가기</a>
+      <div class="report-top-actions">
+        <a class="report-action" href="data/vulnerable-findings.json" download>JSON 다운로드</a>
+        <button class="report-action" type="button" data-print>인쇄 / PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="report-main" id="report-main">
+    <div class="report-shell">
+      <section class="report-hero">
+        <div class="report-kicker">
+          <span class="demo-pill">PUBLIC DEMO · NON-PRODUCTION</span>
+          <span class="result-pill vulnerable">7 REVIEW CANDIDATES</span>
+        </div>
+        <h1>취약 검증 샘플<br><em>정적 점검 리포트</em></h1>
+        <p>의도적으로 7개 위험 패턴을 포함한 Kotlin fixture에 동일한 고정 룰셋을 실행한 공개용 결과입니다. 실제 고객 코드나 운영 서비스의 성과가 아닙니다.</p>
+        <div class="report-meta" aria-label="점검 메타데이터">
+          <div><span>SCAN ID</span><code>demo-20260719-vuln</code></div>
+          <div><span>SCOPE</span><strong>demo://kotlin/vulnerable</strong></div>
+          <div><span>FILES / LOC</span><strong>5 / 137</strong></div>
+          <div><span>RULESET</span><strong>v1.0.0 · 7 checks</strong></div>
+        </div>
+      </section>
+
+      <section class="report-section" aria-labelledby="summary-title">
+        <div class="report-section-heading">
+          <div><p>01 / SUMMARY</p><h2 id="summary-title">점검 요약</h2></div>
+          <span>발견은 확정 판정이 아닌 코드 검토 후보입니다.</span>
+        </div>
+        <div class="report-summary">
+          <article class="critical-count"><span>CRITICAL</span><strong>03</strong><small>우선 맥락 검토 필요</small></article>
+          <article class="warning-count"><span>WARNING</span><strong>04</strong><small>설정·증적 개선 후보</small></article>
+          <article><span>TOTAL</span><strong>07</strong><small>7개 룰 모두 실행</small></article>
+        </div>
+      </section>
+
+      <section class="report-section" aria-labelledby="findings-title">
+        <div class="report-section-heading">
+          <div><p>02 / FINDINGS</p><h2 id="findings-title">전체 발견 목록</h2></div>
+          <span>심각도 내림차순 · 공개용 근거 링크 생략</span>
+        </div>
+        <div class="finding-list">
+          <article class="finding-card">
+            <div class="finding-card-head"><span class="severity critical">CRIT</span><span class="rule-id">CMP-002</span><h3>민감정보 평문 저장·전송</h3><code class="finding-location">AccountService.kt:13</code></div>
+            <div class="finding-body"><div><span>WHY IT MATTERS</span><p>카드·계좌·주민번호 등 민감정보가 암호화 없이 저장·전송될 수 있는 코드 패턴은 노출과 규정 리스크 후보가 됩니다.</p></div><div><span>RECOMMENDATION</span><p>저장·전송 경계를 확인하고 승인된 암호화 방식과 키 관리 체계, 필드 컨버터 적용 여부를 검토합니다.</p></div></div>
+          </article>
+          <article class="finding-card">
+            <div class="finding-card-head"><span class="severity critical">CRIT</span><span class="rule-id">CMP-001</span><h3>시크릿·키 하드코딩</h3><code class="finding-location">OpenBankingCredentialProvider.kt:14</code></div>
+            <div class="finding-body"><div><span>WHY IT MATTERS</span><p>비밀번호·API 키·개인키가 소스 상수로 남으면 코드 유출 시 접근통제가 즉시 약화될 수 있습니다.</p></div><div><span>RECOMMENDATION</span><p>환경변수, Spring 플레이스홀더 또는 외부 시크릿 저장소로 이전하고 저장소 이력의 노출 여부를 별도로 확인합니다.</p></div></div>
+          </article>
+          <article class="finding-card">
+            <div class="finding-card-head"><span class="severity critical">CRIT</span><span class="rule-id">RES-001</span><h3>외부 호출 타임아웃 미설정</h3><code class="finding-location">OrderApiClient.kt:6</code></div>
+            <div class="finding-body"><div><span>WHY IT MATTERS</span><p>외부 연계 지연이 제한 없이 대기하면 스레드와 커넥션을 점유해 서비스 장애로 전파될 수 있습니다.</p></div><div><span>RECOMMENDATION</span><p>사용 중인 HTTP 클라이언트의 connect, read 또는 response timeout을 호출 특성에 맞게 명시합니다.</p></div></div>
+          </article>
+          <article class="finding-card">
+            <div class="finding-card-head"><span class="severity warning">WARN</span><span class="rule-id">RES-002</span><h3>재시도·백오프 정책 부재</h3><code class="finding-location">OrderApiClient.kt:6</code></div>
+            <div class="finding-body"><div><span>WHY IT MATTERS</span><p>일시적 외부 오류가 즉시 사용자 실패로 이어질 수 있습니다. 무분별한 재시도 역시 부하를 키우므로 맥락 검토가 필요합니다.</p></div><div><span>RECOMMENDATION</span><p>멱등성과 실패 유형을 먼저 확인한 뒤 횟수 제한, 지수 백오프, 지터가 있는 재시도 정책을 검토합니다.</p></div></div>
+          </article>
+          <article class="finding-card">
+            <div class="finding-card-head"><span class="severity warning">WARN</span><span class="rule-id">RES-003</span><h3>서킷브레이커 부재</h3><code class="finding-location">OrderApiClient.kt:6</code></div>
+            <div class="finding-body"><div><span>WHY IT MATTERS</span><p>외부 연계 지연이 지속될 때 실패를 빠르게 차단하지 못하면 리소스 잠식과 연쇄 장애 가능성이 커집니다.</p></div><div><span>RECOMMENDATION</span><p>실패율·지연 임계치와 복구 상태 전이를 정의하고 Resilience4j 등 회로 차단 적용을 검토합니다.</p></div></div>
+          </article>
+          <article class="finding-card">
+            <div class="finding-card-head"><span class="severity warning">WARN</span><span class="rule-id">RES-004</span><h3>커넥션 풀 상한 미설정</h3><code class="finding-location">QuoteFeedExecutorConfig.kt:5</code></div>
+            <div class="finding-body"><div><span>WHY IT MATTERS</span><p>DB·HTTP 커넥션의 명시적 상한이 없으면 피크 트래픽에서 리소스 고갈 위험이 커질 수 있습니다.</p></div><div><span>RECOMMENDATION</span><p>HikariCP 또는 HTTP 커넥션 풀의 최대치, 대기 시간, 모니터링 지표를 용량 계획과 함께 설정합니다.</p></div></div>
+          </article>
+          <article class="finding-card">
+            <div class="finding-card-head"><span class="severity warning">WARN</span><span class="rule-id">CMP-003</span><h3>거래 감사 로그 누락</h3><code class="finding-location">WithdrawalService.kt:15</code></div>
+            <div class="finding-body"><div><span>WHY IT MATTERS</span><p>이체·출금·결제 처리 지점의 증적이 없으면 사고·분쟁 시 원인과 처리 결과를 추적하기 어렵습니다.</p></div><div><span>RECOMMENDATION</span><p>민감값을 남기지 않으면서 거래 ID, 행위, 결과, 주체 등 필요한 감사 이벤트를 구조화해 기록합니다.</p></div></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="report-section" aria-labelledby="audit-title">
+        <div class="report-section-heading">
+          <div><p>03 / AUDIT TRAIL</p><h2 id="audit-title">실행한 전체 룰</h2></div>
+          <span>발견 여부와 관계없이 7개 룰 기록</span>
+        </div>
+        <div class="audit-panel">
+          <table class="audit-table">
+            <thead><tr><th>RULE</th><th>CATEGORY</th><th>CHECK</th><th>RESULT</th></tr></thead>
+            <tbody>
+              <tr><td><code>RES-001</code></td><td>resilience</td><td>타임아웃</td><td class="audit-status">found</td></tr>
+              <tr><td><code>RES-002</code></td><td>resilience</td><td>재시도·백오프</td><td class="audit-status">found</td></tr>
+              <tr><td><code>RES-003</code></td><td>resilience</td><td>서킷브레이커</td><td class="audit-status">found</td></tr>
+              <tr><td><code>RES-004</code></td><td>resilience</td><td>커넥션 풀 상한</td><td class="audit-status">found</td></tr>
+              <tr><td><code>CMP-001</code></td><td>compliance risk</td><td>하드코딩 시크릿</td><td class="audit-status">found</td></tr>
+              <tr><td><code>CMP-002</code></td><td>compliance risk</td><td>민감 필드 평문</td><td class="audit-status">found</td></tr>
+              <tr><td><code>CMP-003</code></td><td>compliance risk</td><td>거래 감사 로그</td><td class="audit-status">found</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside class="report-note">
+        <strong>읽을 때의 한계</strong>
+        <p>이 문서는 결정론적 정적 휴리스틱 데모입니다. 런타임·침투·부하 테스트, CVE 검사, 전체 법률 감사, 규정 준수 보장 또는 자동 수정을 포함하지 않습니다. 공개판에서는 로컬 절대 경로와 내부·외부 근거 링크를 제거했습니다.</p>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="report-footer"><div class="report-shell report-footer-inner"><span>48h Release Risk Sprint · public demo</span><span>Generated from a deterministic 7-check fixture run</span></div></footer>
+</body>
+</html>

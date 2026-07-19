@@ -1,0 +1,17 @@
+{
+  "scan_id": "demo-20260719-vuln",
+  "ruleset_version": "1.0.0",
+  "scope": { "path": "demo://kotlin/vulnerable", "files": 5, "loc": 137 },
+  "checks_executed": ["RES-001", "RES-002", "RES-003", "RES-004", "CMP-001", "CMP-002", "CMP-003"],
+  "summary": { "critical": 3, "warning": 4, "info": 0, "total": 7 },
+  "findings": [
+    { "rule_id": "CMP-002", "severity": "critical", "file": "AccountService.kt", "line": 13, "title": "민감정보 평문 저장·전송", "status": "review_candidate" },
+    { "rule_id": "CMP-001", "severity": "critical", "file": "OpenBankingCredentialProvider.kt", "line": 14, "title": "시크릿·키 하드코딩", "status": "review_candidate" },
+    { "rule_id": "RES-001", "severity": "critical", "file": "OrderApiClient.kt", "line": 6, "title": "외부 호출 타임아웃 미설정", "status": "review_candidate" },
+    { "rule_id": "RES-002", "severity": "warning", "file": "OrderApiClient.kt", "line": 6, "title": "재시도·백오프 정책 부재", "status": "review_candidate" },
+    { "rule_id": "RES-003", "severity": "warning", "file": "OrderApiClient.kt", "line": 6, "title": "서킷브레이커 부재", "status": "review_candidate" },
+    { "rule_id": "RES-004", "severity": "warning", "file": "QuoteFeedExecutorConfig.kt", "line": 5, "title": "커넥션 풀 상한 미설정", "status": "review_candidate" },
+    { "rule_id": "CMP-003", "severity": "warning", "file": "WithdrawalService.kt", "line": 15, "title": "거래 감사 로그 누락", "status": "review_candidate" }
+  ],
+  "disclaimer": "Public non-production fixture. Findings are static review candidates, not confirmed defects or legal conclusions."
+}

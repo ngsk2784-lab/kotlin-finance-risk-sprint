@@ -1,0 +1,9 @@
+{
+  "scan_id": "demo-20260719-clean",
+  "ruleset_version": "1.0.0",
+  "scope": { "path": "demo://kotlin/clean", "files": 5, "loc": 180 },
+  "checks_executed": ["RES-001", "RES-002", "RES-003", "RES-004", "CMP-001", "CMP-002", "CMP-003"],
+  "summary": { "critical": 0, "warning": 0, "info": 0, "total": 0 },
+  "findings": [],
+  "disclaimer": "Public non-production fixture. Zero findings does not certify safety, security, or compliance."
+}
