@@ -65,6 +65,10 @@ jobs:
           assert vulnerable['summary'] == {'critical': 3, 'warning': 4, 'info': 0, 'total': 7}
           assert clean['summary'] == {'critical': 0, 'warning': 0, 'info': 0, 'total': 0}
 
+          buyer_brief = root / 'buyer-brief.pdf'
+          assert buyer_brief.stat().st_size > 20_000
+          assert buyer_brief.read_bytes()[:5] == b'%PDF-'
+
           config = json.loads((root / 'vercel.json').read_text(encoding='utf-8'))
           csp = next(item['value'] for item in config['headers'][0]['headers'] if item['key'] == 'Content-Security-Policy')
           assert "script-src 'self'" in csp and "'unsafe-inline'" not in csp
