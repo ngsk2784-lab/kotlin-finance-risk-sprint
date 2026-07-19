@@ -5,6 +5,7 @@
 Kotlin/Spring 금융 백엔드 한 서비스를 대상으로, 배포 전에 복원력과 민감정보 취급 위험 후보를 빠르게 정리하는 48시간 정적 프리플라이트 서비스의 공개 포트폴리오입니다.
 
 - 라이브 사이트: https://kotlin-finance-risk-sprint.vercel.app
+- 보안·데이터 처리 원칙: https://kotlin-finance-risk-sprint.vercel.app/security
 - 서비스 대가: KRW 1,100,000. 세금·원천징수·증빙은 양측의 실제 요건에 따라 SOW에서 확정
 - 범위: 서비스 1개, 검사 대상 Kotlin 소스 최대 30,000 LoC
 - 기산점: SOW 승인·결제·권한 있는 접근·서면 범위·리미디에이션 슬롯 결정 규칙·비프로덕션 빌드/테스트 전제 확인 후

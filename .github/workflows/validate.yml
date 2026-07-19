@@ -76,6 +76,7 @@ jobs:
               'https://kotlin-finance-risk-sprint.vercel.app/',
               'https://kotlin-finance-risk-sprint.vercel.app/sample-vulnerable',
               'https://kotlin-finance-risk-sprint.vercel.app/sample-clean',
+              'https://kotlin-finance-risk-sprint.vercel.app/security',
           }
           robots = (root / 'robots.txt').read_text(encoding='utf-8')
           assert 'Sitemap: https://kotlin-finance-risk-sprint.vercel.app/sitemap.xml' in robots

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>보안·데이터 처리 원칙 — 48h Release Risk Sprint</title>
+  <meta name="description" content="48h Release Risk Sprint의 저장소 접근, 금지 데이터, 외부 AI 승인, 보존·삭제 원칙을 공개합니다.">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#07110f">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://kotlin-finance-risk-sprint.vercel.app/security">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="report.css">
+</head>
+<body class="report-body">
+  <a class="skip-link" href="#security-main">보안 원칙 본문으로 건너뛰기</a>
+  <header class="report-topbar">
+    <div class="report-shell report-topbar-inner">
+      <a class="report-back" href="index.html#limits"><span aria-hidden="true">←</span> 서비스 소개로 돌아가기</a>
+      <div class="report-top-actions"><a class="report-action" href="mailto:ngsk2784@gmail.com?subject=%5BRelease%20Risk%20Sprint%5D%20%EB%B3%B4%EC%95%88%C2%B7%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%B2%98%EB%A6%AC%20%EB%AC%B8%EC%9D%98">보안 원칙 문의</a></div>
+    </div>
+  </header>
+
+  <main class="report-main" id="security-main">
+    <div class="report-shell">
+      <section class="report-hero">
+        <div class="report-kicker"><span class="demo-pill">PUBLIC OPERATING POLICY</span><span class="result-pill clean">MINIMUM ACCESS</span></div>
+        <h1>비공개 코드는<br><em>최소 권한·최단 기간</em>만 다룹니다.</h1>
+        <p>이 페이지는 공개 기본안입니다. 실제 고객의 더 엄격한 정책과 최종 SOW가 우선하며, 예외는 대상·사유·승인자·종료일을 서면으로 남깁니다.</p>
+        <div class="report-meta" aria-label="핵심 보안 조건">
+          <div><span>ACCESS</span><strong>임시·최소권한</strong></div>
+          <div><span>PRODUCTION DATA</span><strong>받지 않음</strong></div>
+          <div><span>EXTERNAL AI</span><strong>사전 서면 승인</strong></div>
+          <div><span>SOURCE COPY</span><strong>납품 후 최대 7일</strong></div>
+        </div>
+      </section>
+
+      <section class="report-section" aria-labelledby="access-title">
+        <div class="report-section-heading"><div><p>01 / ACCESS</p><h2 id="access-title">접근 범위를 먼저 고정합니다.</h2></div><span>저장소 · 커밋 · 서비스 경로</span></div>
+        <div class="finding-list">
+          <article class="finding-card"><div class="finding-card-head"><span class="severity warning">READ</span><h3>검사 단계는 읽기 전용</h3></div><div class="finding-body"><div><span>DEFAULT</span><p>대상 저장소·서비스로 제한된 임시 읽기 전용 권한을 사용하고, 고정 커밋 SHA와 포함·제외 경로를 SOW에 기록합니다.</p></div><div><span>NOT ACCEPTED</span><p>전체 조직 관리자, 공유 계정, 장기 개인 토큰, 프로덕션 셸·DB·클라우드 콘솔 권한은 받지 않습니다.</p></div></div></article>
+          <article class="finding-card"><div class="finding-card-head"><span class="severity warning">WRITE</span><h3>PR은 별도 승인된 임시 브랜치만</h3></div><div class="finding-body"><div><span>WHEN ALLOWED</span><p>리미디에이션 경로 A를 선택하고 고객이 PR을 원할 때만 임시 작업 브랜치의 최소 쓰기 권한을 별도로 승인받습니다.</p></div><div><span>BOUNDARY</span><p>기본 브랜치 병합과 운영 배포는 고객이 수행합니다. 패치 파일·플레이북 경로에는 쓰기 권한이 필요하지 않습니다.</p></div></div></article>
+        </div>
+      </section>
+
+      <section class="report-section" aria-labelledby="data-title">
+        <div class="report-section-heading"><div><p>02 / DATA HYGIENE</p><h2 id="data-title">받지 않는 데이터를 명시합니다.</h2></div><span>실데이터 없이 재현</span></div>
+        <div class="report-summary">
+          <article class="critical-count"><span>CREDENTIALS</span><strong>×</strong><small>운영 비밀번호·키·토큰·개인키</small></article>
+          <article class="warning-count"><span>PERSONAL DATA</span><strong>×</strong><small>주민번호·계좌·카드·연락처</small></article>
+          <article><span>PRODUCTION</span><strong>×</strong><small>실거래 로그·DB 덤프·고객 데이터</small></article>
+        </div>
+        <aside class="report-note"><strong>발견 시 복사하지 않고 중단</strong><p>실제 시크릿이나 개인·금융 데이터가 범위에서 발견되면 값을 보고서에 복사하거나 인용하지 않습니다. 작업을 멈추고 위치만 최소한으로 알리며, 회전·폐기와 사고 대응 판단은 고객이 수행합니다.</p></aside>
+      </section>
+
+      <section class="report-section" aria-labelledby="ai-title">
+        <div class="report-section-heading"><div><p>03 / EXTERNAL PROCESSING</p><h2 id="ai-title">외부 AI·모델 입력은 기본 허용이 아닙니다.</h2></div><span>승인 전 전송 금지</span></div>
+        <div class="audit-panel"><table class="audit-table"><thead><tr><th>확인 항목</th><th>SOW 기록</th><th>승인 전 상태</th></tr></thead><tbody>
+          <tr><td>제공자·제품·처리 목적</td><td>실제 사용 대상과 전송 범위</td><td><span class="audit-status clear">금지</span></td></tr>
+          <tr><td>보존·학습 사용 여부</td><td>정책 URL·버전·확인일</td><td><span class="audit-status clear">금지</span></td></tr>
+          <tr><td>하위처리자·처리 위치</td><td>확인 근거와 예외</td><td><span class="audit-status clear">금지</span></td></tr>
+          <tr><td>고객 서면 승인</td><td>승인자·승인일·허용 범위</td><td><span class="audit-status clear">필수</span></td></tr>
+        </tbody></table></div>
+        <aside class="report-note"><strong>공개 입력·링크는 사용하지 않음</strong><p>고객 승인 여부와 무관하게 원본 코드·산출물을 공개 AI 입력, 공개 저장소 또는 공개 파일 링크에 올리지 않습니다.</p></aside>
+      </section>
+
+      <section class="report-section" aria-labelledby="retention-title">
+        <div class="report-section-heading"><div><p>04 / RETENTION</p><h2 id="retention-title">리뷰가 늦어져도 절대 상한이 있습니다.</h2></div><span>더 이른 삭제 요청 가능</span></div>
+        <div class="audit-panel"><table class="audit-table"><thead><tr><th>데이터</th><th>기본 삭제 시점</th></tr></thead><tbody>
+          <tr><td>제공자가 보유한 로컬 접근 토큰</td><td>납품 직후 사용 중지·삭제; 고객 회수 여부는 리뷰 종료 또는 납품 후 7일 중 먼저 오는 시점까지 확인</td></tr>
+          <tr><td>원본 저장소의 로컬 작업 사본</td><td>리뷰 종료 후 24시간 이내, 어떤 경우에도 납품 후 7일 이내</td></tr>
+          <tr><td>보고서·JSON·패치·재검사 작업 사본</td><td>리뷰 종료 후 7일 이내, 어떤 경우에도 납품 후 14일 이내</td></tr>
+          <tr><td>임시 로그·캐시</td><td>납품 검증 종료 후 24시간 이내, 어떤 경우에도 납품 후 3일 이내</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="report-section" aria-labelledby="incident-title">
+        <div class="report-section-heading"><div><p>05 / INCIDENTS</p><h2 id="incident-title">의심되면 먼저 멈춥니다.</h2></div><span>사실·시각·영향 범위 기록</span></div>
+        <aside class="report-note"><strong>복사 방지 → 작업 중지 → 고객 통지</strong><p>무단 접근, 잘못된 수신자, 시크릿 노출 또는 범위 밖 데이터가 의심되면 추가 복사를 막고 작업을 중지합니다. 통지 기한과 방식은 고객 정책과 적용 법률을 SOW에서 확인합니다. 기술적으로 검증하지 못한 “완전 복구 불가” 또는 인증 삭제를 주장하지 않습니다.</p></aside>
+      </section>
+
+      <aside class="report-note"><strong>공개 운영 원칙 · 법률 자문 아님</strong><p>이 페이지는 보안·데이터 처리 기본안을 설명하며 법률 자문, 인증 또는 특정 관할 준수 보장이 아닙니다. 실제 거래 전 당사자 지위, 고객 정책, 적용 법률과 최종 SOW를 확인합니다.</p></aside>
+    </div>
+  </main>
+
+  <footer class="report-footer"><div class="report-shell report-footer-inner"><span>48h Release Risk Sprint · security policy</span><span>Updated 2026-07-19</span></div></footer>
+</body>
+</html>
