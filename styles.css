@@ -1219,8 +1219,18 @@ a {
   content: "·";
 }
 
-.free-card .button {
+.free-actions {
+  display: grid;
+  gap: 11px;
   margin-top: auto;
+}
+
+.free-email-link {
+  color: var(--muted);
+  font-size: 0.7rem;
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .boundaries-section {
